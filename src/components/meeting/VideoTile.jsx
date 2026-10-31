@@ -30,16 +30,30 @@ export default function VideoTile({
 }) {
   const videoRef = useRef(null);
 
-  // Bind MediaStream to <video> element
+    // Bind MediaStream whenever the video element or camera state changes
   useEffect(() => {
-    if (videoRef.current) {
-      if (stream) {
-        videoRef.current.srcObject = stream;
-      } else {
-        videoRef.current.srcObject = null;
+    const videoElement = videoRef.current;
+
+    if (!videoElement) return;
+
+    if (camOn && stream) {
+      if (videoElement.srcObject !== stream) {
+        videoElement.srcObject = stream;
       }
+
+      videoElement.play().catch((err) => {
+        console.warn('[VideoTile] Playback could not start:', err);
+      });
+    } else {
+      videoElement.srcObject = null;
     }
-  }, [stream]);
+
+    return () => {
+      if (videoElement.srcObject === stream) {
+        videoElement.srcObject = null;
+      }
+    };
+  }, [stream, camOn]);
 
   return (
     <div

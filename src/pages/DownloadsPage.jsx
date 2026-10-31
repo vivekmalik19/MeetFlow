@@ -99,7 +99,7 @@ export default function DownloadsPage() {
 
       if (res.success && res.downloadUrl) {
         // Trigger browser download via stream URL
-        const fullUrl = `http://localhost:5001${res.downloadUrl}`;
+        const fullUrl = `${(import.meta.env.VITE_API_URL || 'http://localhost:5001/api').replace(/\/api\/?$/, '')}${res.downloadUrl}`;
         const a = document.createElement('a');
         a.href = fullUrl;
         a.download = res.fileName || 'video.mp4';

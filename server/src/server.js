@@ -99,13 +99,18 @@ initMeetingSocket(server);
 
 // Start server after connecting to database
 async function startServer() {
-  await connectDB();
+  try {
+    await connectDB();
 
-  server.listen(config.port, () => {
-    console.log(`[MeetFlow Server] Running in ${config.nodeEnv} mode on port ${config.port}`);
-    console.log(`[MeetFlow Server] API Health: http://localhost:${config.port}/api/health`);
-    console.log(`[MeetFlow Server] WebRTC Signaling Engine Ready on Socket.IO`);
-  });
+    server.listen(config.port, '0.0.0.0', () => {
+      console.log(`[MeetFlow Server] Running in ${config.nodeEnv} mode on port ${config.port}`);
+      console.log(`[MeetFlow Server] API Health: http://localhost:${config.port}/api/health`);
+      console.log(`[MeetFlow Server] WebRTC Signaling Engine Ready on Socket.IO`);
+    });
+  } catch (error) {
+    console.error('[MeetFlow Server] Startup failed:', error);
+    process.exit(1);
+  }
 }
 
 startServer();
